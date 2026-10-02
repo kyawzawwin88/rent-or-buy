@@ -5,9 +5,14 @@ load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
 npm_link_all_packages(name = "node_modules")
 
 ts_config(
+    name = "tsconfig_base",
+    src = "tsconfig.base.json",
+)
+
+ts_config(
     name = "tsconfig",
     src = "tsconfig.json",
-    deps = ["//:tsconfig"],
+    deps = [":tsconfig_base"],
 )
 
 ts_project(
