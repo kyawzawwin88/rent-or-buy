@@ -6,7 +6,7 @@ import {
   type WorkshopView,
 } from "../../lib/workshop-links";
 
-const linkClass = "inline-flex min-h-11 items-center border-b-2 px-3 text-base";
+const linkClass = "inline-flex min-h-11 items-center border-b-2 px-3 text-base text-ink";
 
 export function WorkshopSwitch({ current }: Readonly<{ current: WorkshopView }>) {
   const [hrefs, setHrefs] = useState({
@@ -68,7 +68,7 @@ function WorkshopLink({
       href={href}
       target="_top"
       aria-current={current ? "page" : undefined}
-      className={`${linkClass} ${current ? "border-rausch text-ink" : "border-transparent text-mute"}`}
+      className={`${linkClass} ${current ? "border-ink" : "border-transparent"}`}
     >
       {children}
     </a>

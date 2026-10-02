@@ -8,7 +8,7 @@ const config: Config = {
         canvas: "#ffffff",
         ink: "#222222",
         mute: "#6a6a6a",
-        line: "#dddddd",
+        line: "#949494",
         rausch: "#ff385c",
       },
       borderRadius: {

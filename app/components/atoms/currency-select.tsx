@@ -35,7 +35,7 @@ export function CurrencySelect({
           </option>
         ))}
       </select>
-      <span className="text-sm text-mute">
+      <span className="text-sm text-ink">
         Same numbers, in the currency you pick. No exchange rate.
       </span>
     </div>

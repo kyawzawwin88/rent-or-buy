@@ -7,8 +7,9 @@
     "dev": "remix vite:dev --host 0.0.0.0 --port 5173",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
+    "start-all": "concurrently -n remix,storybook -c cyan,magenta \"pnpm start\" \"pnpm storybook\"",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "storybook": "LAUNCH_EDITOR=\"${LAUNCH_EDITOR:-cursor}\" storybook dev --host 0.0.0.0 --port 6006 -c storybooks/.storybook",
+    "storybook": "storybook dev --host 0.0.0.0 --port 6006 -c storybooks/.storybook",
     "build-storybook": "storybook build -c storybooks/.storybook -o storybooks/storybook-static",
     "test-storybook": "test-storybook --config-dir storybooks/.storybook --url http://127.0.0.1:6006"
   },
@@ -31,6 +32,7 @@
     "@types/react-dom": "18.3.7",
     "@types/react-test-renderer": "18.3.1",
     "autoprefixer": "10.4.21",
+    "concurrently": "^9.2.4",
     "postcss": "8.5.6",
     "react-test-renderer": "18.3.1",
     "storybook": "10.6.1",
