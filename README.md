@@ -43,6 +43,8 @@ Reading this as: a one-page housing comparison on the site design system in `DES
 
 Stories for the atoms, molecules, organisms, the page template, and the decision page live in `storybooks/`. Each story renders the real component. Interaction stories use a `play` function so the test runner can exercise them. The Site / Storybook control at the top of the page opens the other view. Storybook keeps the same control and returns to the site you came from.
 
+Set `STORYBOOK_URL` to the Storybook origin when that workshop runs on another domain, for example `https://storybook.example.com`. The control uses that address and appends the current site origin. When `STORYBOOK_URL` is unset, Storybook is this host on port 6006.
+
 ```bash
 pnpm --filter @sites/rent-or-buy storybook
 pnpm --filter @sites/rent-or-buy test-storybook

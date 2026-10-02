@@ -16,6 +16,33 @@ ts_config(
 )
 
 ts_project(
+    name = "workshop_links",
+    srcs = ["app/lib/workshop-links.ts"],
+    declaration = True,
+    declaration_map = True,
+    source_map = True,
+    tsconfig = ":tsconfig",
+    deps = [
+        "//:node_modules/@types/node",
+    ],
+)
+
+ts_project(
+    name = "workshop_links_tests",
+    testonly = True,
+    srcs = ["app/lib/workshop-links.test.ts"],
+    declaration = True,
+    declaration_map = True,
+    source_map = True,
+    tsconfig = ":tsconfig",
+    deps = [
+        ":workshop_links",
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+    ],
+)
+
+ts_project(
     name = "compare",
     srcs = [
         "app/lib/compare.ts",
@@ -85,6 +112,7 @@ jest_test(
     config = "jest.config.cjs",
     data = [
         ":compare_tests",
+        ":workshop_links_tests",
         "//:node_modules/jest-cli",
     ],
     node_modules = "//:node_modules",

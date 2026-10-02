@@ -2,16 +2,25 @@ import { useEffect, useState } from "react";
 import {
   SITE_ORIGIN_KEY,
   siteHref,
+  storybookHome,
   storybookHref,
   type WorkshopView,
 } from "../../lib/workshop-links";
 
 const linkClass = "inline-flex min-h-11 items-center border-b-2 px-3 text-base text-ink";
 
-export function WorkshopSwitch({ current }: Readonly<{ current: WorkshopView }>) {
+export function WorkshopSwitch({
+  current,
+  storybookUrl = null,
+  storybookLink = null,
+}: Readonly<{
+  current: WorkshopView;
+  storybookUrl?: string | null;
+  storybookLink?: string | null;
+}>) {
   const [hrefs, setHrefs] = useState({
     site: current === "site" ? "/" : "http://localhost:5173/",
-    storybook: "http://localhost:6006/",
+    storybook: storybookLink ?? "http://localhost:6006/",
   });
 
   useEffect(() => {
@@ -22,7 +31,7 @@ export function WorkshopSwitch({ current }: Readonly<{ current: WorkshopView }>)
     if (current === "site") {
       setHrefs({
         site: "/",
-        storybook: storybookHref({ protocol, hostname, origin }),
+        storybook: storybookHref({ protocol, hostname, origin }, storybookUrl),
       });
       return;
     }
@@ -36,15 +45,15 @@ export function WorkshopSwitch({ current }: Readonly<{ current: WorkshopView }>)
       }
     }
     const storedSite = window.sessionStorage.getItem(SITE_ORIGIN_KEY);
-    const next = siteHref({ protocol, hostname, search, parentSearch, storedSite });
+    const next = siteHref({ protocol, hostname, search, parentSearch, storedSite, storybookUrl });
     if (next.storeSite) {
       window.sessionStorage.setItem(SITE_ORIGIN_KEY, next.storeSite);
     }
     setHrefs({
       site: next.href,
-      storybook: `${protocol}//${hostname}:6006/`,
+      storybook: storybookHome({ protocol, hostname }, storybookUrl),
     });
-  }, [current]);
+  }, [current, storybookUrl]);
 
   return (
     <nav aria-label="Workshop" className="inline-flex rounded-field border border-line bg-canvas p-1">

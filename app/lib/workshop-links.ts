@@ -4,10 +4,20 @@ export const SITE_ORIGIN_KEY = "rent-or-buy-site-origin";
 
 export type WorkshopView = "site" | "storybook";
 
-export function storybookHref(location: { protocol: string; hostname: string; origin: string }): string {
-  const url = new URL(`${location.protocol}//${location.hostname}:${STORYBOOK_PORT}/`);
+export function storybookHref(
+  location: { protocol: string; hostname: string; origin: string },
+  storybookUrl?: string | null,
+): string {
+  const url = httpUrl(storybookUrl) ?? new URL(`${location.protocol}//${location.hostname}:${STORYBOOK_PORT}/`);
   url.searchParams.set("site", `${location.origin}/`);
   return url.toString();
+}
+
+export function storybookHome(
+  location: { protocol: string; hostname: string },
+  storybookUrl?: string | null,
+): string {
+  return httpUrl(storybookUrl)?.toString() ?? `${location.protocol}//${location.hostname}:${STORYBOOK_PORT}/`;
 }
 
 export function siteHref(input: {
@@ -16,19 +26,21 @@ export function siteHref(input: {
   search: string;
   parentSearch: string | null;
   storedSite: string | null;
+  storybookUrl?: string | null;
 }): { href: string; storeSite: string | null } {
-  const fromQuery = sameHostHttp(readSiteParam(input.search), input.hostname);
+  const fromQuery = acceptedSite(readSiteParam(input.search), input.hostname, input.storybookUrl);
   if (fromQuery) {
     return { href: fromQuery, storeSite: fromQuery };
   }
-  const fromParent = sameHostHttp(
+  const fromParent = acceptedSite(
     input.parentSearch ? readSiteParam(input.parentSearch) : null,
     input.hostname,
+    input.storybookUrl,
   );
   if (fromParent) {
     return { href: fromParent, storeSite: fromParent };
   }
-  const stored = sameHostHttp(input.storedSite, input.hostname);
+  const stored = acceptedSite(input.storedSite, input.hostname, input.storybookUrl);
   if (stored) {
     return { href: stored, storeSite: null };
   }
@@ -42,19 +54,27 @@ function readSiteParam(search: string): string | null {
   return new URLSearchParams(search).get("site");
 }
 
-function sameHostHttp(value: string | null, hostname: string): string | null {
-  if (!value) {
+function acceptedSite(value: string | null, hostname: string, storybookUrl?: string | null): string | null {
+  const url = httpUrl(value);
+  if (!url) {
+    return null;
+  }
+  if (url.hostname === hostname || httpUrl(storybookUrl)?.hostname === hostname) {
+    return url.toString();
+  }
+  return null;
+}
+
+function httpUrl(value: string | null | undefined): URL | null {
+  if (!value?.trim()) {
     return null;
   }
   try {
-    const url = new URL(value);
+    const url = new URL(value.trim());
     if (url.protocol !== "http:" && url.protocol !== "https:") {
       return null;
     }
-    if (url.hostname !== hostname) {
-      return null;
-    }
-    return url.toString();
+    return url;
   } catch {
     return null;
   }

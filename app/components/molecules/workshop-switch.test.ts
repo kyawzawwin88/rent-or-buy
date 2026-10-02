@@ -50,6 +50,22 @@ describe("workshop switch", () => {
     expect(links[1]?.props.href).toBe("http://localhost:6006/?site=http%3A%2F%2Flocalhost%3A5174%2F");
   });
 
+  it("sends the site view to the storybook url from the environment", async () => {
+    installWindow("", null);
+    let renderer: ReturnType<typeof create> | undefined;
+    await act(async () => {
+      renderer = create(
+        createElement(WorkshopSwitch, {
+          current: "site",
+          storybookUrl: "https://storybook.example.com",
+          storybookLink: "https://storybook.example.com/?site=http%3A%2F%2Flocalhost%3A5174%2F",
+        }),
+      );
+    });
+    const links = renderer?.root.findAllByType("a") ?? [];
+    expect(links[1]?.props.href).toBe("https://storybook.example.com/?site=http%3A%2F%2Flocalhost%3A5174%2F");
+  });
+
   it("returns from storybook to the stored site", async () => {
     const win = installWindow("", "?site=http://localhost:5174/");
     let renderer: ReturnType<typeof create> | undefined;
@@ -60,5 +76,28 @@ describe("workshop switch", () => {
     expect(links[0]?.props.href).toBe("http://localhost:5174/");
     expect(links[1]?.props["aria-current"]).toBe("page");
     expect(win.sessionStorage.getItem(SITE_ORIGIN_KEY)).toBe("http://localhost:5174/");
+  });
+
+  it("ignores a parent frame that hides its address", async () => {
+    const win = installWindow("", "");
+    const parent = {};
+    Object.defineProperty(parent, "location", {
+      get() {
+        throw new Error("cross-origin");
+      },
+    });
+    win.parent = parent;
+    let renderer: ReturnType<typeof create> | undefined;
+    await act(async () => {
+      renderer = create(
+        createElement(WorkshopSwitch, {
+          current: "storybook",
+          storybookUrl: "https://storybook.example.com",
+        }),
+      );
+    });
+    const links = renderer?.root.findAllByType("a") ?? [];
+    expect(links[0]?.props.href).toBe("http://localhost:5173/");
+    expect(links[1]?.props.href).toBe("https://storybook.example.com/");
   });
 });

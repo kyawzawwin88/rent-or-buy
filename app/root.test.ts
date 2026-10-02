@@ -1,3 +1,5 @@
+let loaderData: { storybookUrl: string | null; storybookLink: string } | undefined;
+
 jest.mock("@remix-run/react", () => ({
   Links() {
     return null;
@@ -14,9 +16,23 @@ jest.mock("@remix-run/react", () => ({
   ScrollRestoration() {
     return null;
   },
+  useRouteLoaderData() {
+    return loaderData;
+  },
 }));
 
 describe("document shell", () => {
+  const previous = process.env.STORYBOOK_URL;
+
+  afterEach(() => {
+    loaderData = undefined;
+    if (previous === undefined) {
+      delete process.env.STORYBOOK_URL;
+    } else {
+      process.env.STORYBOOK_URL = previous;
+    }
+  });
+
   it("renders the page shell, the outlet, and the error page", () => {
     const React = require("react") as typeof import("react");
     const { create } = require("react-test-renderer") as typeof import("react-test-renderer");
@@ -44,5 +60,30 @@ describe("document shell", () => {
           "Compare the cash, equity, and invested down payment of buying or renting. No account.",
       },
     ]);
+  });
+
+  it("points Storybook at STORYBOOK_URL", () => {
+    const root = require("./root") as typeof import("./root");
+    process.env.STORYBOOK_URL = " https://storybook.example.com/workshop ";
+    expect(root.loader({ request: new Request("http://127.0.0.1:5173/") })).toEqual({
+      storybookUrl: "https://storybook.example.com/workshop",
+      storybookLink: "https://storybook.example.com/workshop?site=http%3A%2F%2F127.0.0.1%3A5173%2F",
+    });
+
+    delete process.env.STORYBOOK_URL;
+    expect(root.loader({ request: new Request("http://127.0.0.1:5173/") }).storybookLink).toBe(
+      "http://127.0.0.1:6006/?site=http%3A%2F%2F127.0.0.1%3A5173%2F",
+    );
+
+    loaderData = {
+      storybookUrl: "https://storybook.example.com/workshop",
+      storybookLink: "https://storybook.example.com/workshop?site=http%3A%2F%2F127.0.0.1%3A5173%2F",
+    };
+    const React = require("react") as typeof import("react");
+    const { create } = require("react-test-renderer") as typeof import("react-test-renderer");
+    const shell = create(React.createElement(root.Layout, null, "child"));
+    expect(JSON.stringify(shell.toJSON())).toContain(
+      "https://storybook.example.com/workshop?site=http%3A%2F%2F127.0.0.1%3A5173%2F",
+    );
   });
 });

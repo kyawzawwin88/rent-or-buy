@@ -1,14 +1,28 @@
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "@remix-run/react";
 import publicSans400 from "@fontsource/public-sans/400.css?url";
 import { WorkshopSwitch } from "./components/molecules/workshop-switch";
+import { storybookHref } from "./lib/workshop-links";
 import stylesheet from "./tailwind.css?url";
+
+export function loader({ request }: LoaderFunctionArgs) {
+  const site = new URL(request.url);
+  const storybookUrl = process.env.STORYBOOK_URL?.trim() || null;
+  return {
+    storybookUrl,
+    storybookLink: storybookHref(
+      { protocol: site.protocol, hostname: site.hostname, origin: site.origin },
+      storybookUrl,
+    ),
+  };
+}
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: publicSans400 },
@@ -25,6 +39,7 @@ export const meta: MetaFunction = () => [
 ];
 
 export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const data = useRouteLoaderData<typeof loader>("root");
   return (
     <html lang="en">
       <head>
@@ -35,7 +50,11 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
       </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <div className="mx-auto flex w-full max-w-[90rem] justify-end px-4 pt-4 sm:px-8 lg:px-12">
-          <WorkshopSwitch current="site" />
+          <WorkshopSwitch
+            current="site"
+            storybookUrl={data?.storybookUrl}
+            storybookLink={data?.storybookLink}
+          />
         </div>
         {children}
         <ScrollRestoration />
