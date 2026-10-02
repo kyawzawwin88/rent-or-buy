@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "resolveJsonModule": false,
+    "types": ["node", "jest"],
+    "baseUrl": ".",
+    "paths": {
+      "@awb/architecture": ["app/awb-architecture.d.ts"]
+    }
+  },
+  "include": ["app/lib/**/*.ts", "app/architecture.test.ts"]
+}

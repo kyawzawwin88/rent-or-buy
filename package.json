@@ -1,0 +1,42 @@
+{
+  "name": "@sites/rent-or-buy",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remix vite:dev --host 0.0.0.0 --port 5173",
+    "build": "remix vite:build",
+    "start": "remix-serve ./build/server/index.js",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "storybook": "LAUNCH_EDITOR=\"${LAUNCH_EDITOR:-cursor}\" storybook dev --host 0.0.0.0 --port 6006 -c storybooks/.storybook",
+    "build-storybook": "storybook build -c storybooks/.storybook -o storybooks/storybook-static",
+    "test-storybook": "test-storybook --config-dir storybooks/.storybook --url http://127.0.0.1:6006"
+  },
+  "dependencies": {
+    "@fontsource/public-sans": "5.3.0",
+    "@remix-run/node": "2.17.5",
+    "@remix-run/react": "2.17.5",
+    "@remix-run/serve": "2.17.5",
+    "isbot": "5.2.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "2.17.5",
+    "@storybook/addon-a11y": "10.6.1",
+    "@storybook/addon-docs": "10.6.1",
+    "@storybook/react-vite": "10.6.1",
+    "@storybook/test-runner": "0.26.0",
+    "@types/react": "18.3.24",
+    "@types/react-dom": "18.3.7",
+    "@types/react-test-renderer": "18.3.1",
+    "autoprefixer": "10.4.21",
+    "postcss": "8.5.6",
+    "react-test-renderer": "18.3.1",
+    "storybook": "10.6.1",
+    "tailwindcss": "3.4.19",
+    "typescript": "5.9.3",
+    "vite": "6.4.3",
+    "vite-tsconfig-paths": "5.1.4"
+  }
+}

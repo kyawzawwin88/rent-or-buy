@@ -1,0 +1,102 @@
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config", "ts_project")
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+
+npm_link_all_packages(name = "node_modules")
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    deps = ["//:tsconfig"],
+)
+
+ts_project(
+    name = "compare",
+    srcs = [
+        "app/lib/compare.ts",
+        "app/lib/draft.ts",
+        "app/lib/money.ts",
+        "app/lib/refresh.ts",
+        "app/lib/verdict.ts",
+    ],
+    declaration = True,
+    declaration_map = True,
+    source_map = True,
+    tsconfig = ":tsconfig",
+    deps = [
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+    ],
+)
+
+ts_project(
+    name = "compare_tests",
+    testonly = True,
+    srcs = [
+        "app/lib/compare.test.ts",
+        "app/lib/draft.test.ts",
+        "app/lib/money.test.ts",
+        "app/lib/refresh.test.ts",
+        "app/lib/verdict.test.ts",
+    ],
+    declaration = True,
+    declaration_map = True,
+    source_map = True,
+    tsconfig = ":tsconfig",
+    deps = [
+        ":compare",
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+    ],
+)
+
+ts_project(
+    name = "architecture_tests",
+    testonly = True,
+    srcs = [
+        "app/architecture.test.ts",
+        "app/awb-architecture.d.ts",
+    ],
+    declaration = True,
+    declaration_map = True,
+    source_map = True,
+    tsconfig = ":tsconfig",
+    deps = [
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+    ],
+)
+
+filegroup(
+    name = "site_sources",
+    srcs = glob([
+        "app/components/**/*.tsx",
+        "app/lib/compare.ts",
+    ]),
+)
+
+jest_test(
+    name = "unit_test",
+    config = "jest.config.cjs",
+    data = [
+        ":compare_tests",
+        "//:node_modules/jest-cli",
+    ],
+    node_modules = "//:node_modules",
+    tags = ["unit"],
+)
+
+jest_test(
+    name = "architecture_test",
+    config = "jest.architecture.config.cjs",
+    data = [
+        ":architecture_tests",
+        ":site_sources",
+        "jest-ts-transform.cjs",
+        "//packages/architecture:rules_sources",
+        "//:node_modules/jest-cli",
+        "//:node_modules/typescript",
+    ],
+    node_modules = "//:node_modules",
+    tags = ["architecture"],
+)

@@ -1,0 +1,11 @@
+build
+.cache
+dist
+dist-app
+.react-router
+coverage
+.scannerwork
+storybook-static
+.scannerwork
+node_modules
+.env
