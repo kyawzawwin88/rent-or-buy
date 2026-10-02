@@ -7,7 +7,7 @@
     "dev": "remix vite:dev --host 0.0.0.0 --port 5173",
     "build": "remix vite:build",
     "start": "remix-serve ./build/server/index.js",
-    "start-all": "concurrently -n remix,storybook -c cyan,magenta \"pnpm start\" \"pnpm storybook\"",
+    "start-all": "concurrently -n remix,storybook -c cyan,magenta \"npm run start\" \"npm run storybook\"",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "storybook": "storybook dev --host 0.0.0.0 --port 6006 -c storybooks/.storybook",
     "build-storybook": "storybook build -c storybooks/.storybook -o storybooks/storybook-static",
