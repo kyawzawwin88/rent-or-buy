@@ -2,6 +2,8 @@
 
 One public page that compares buying a home with renting it, in a currency you pick, with no account. The figures are not converted.
 
+Demo: https://rent-or-buy-agentic-website-builder.up.railway.app/
+
 ## Dev
 
 From the repo root, after `pnpm install`:
@@ -51,3 +53,5 @@ pnpm --filter @sites/rent-or-buy test-storybook
 ## Sonar Gate
 
 ![SonarQube new-code gate: 0 new issues, 96.6% coverage, 0% duplications, security rating A](sonar-gate.png)
+
+If you find this site useful, consider [buying me a coffee](https://buymeacoffee.com/kyawzawwin). ☕
